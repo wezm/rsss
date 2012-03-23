@@ -32,11 +32,35 @@ void subscriptions_free(Subscriptions *self)
   free(self);
 }
 
-static Subscription *subscription_new(xmlNodePtr node)
+static Subscription *subscription_new_node(xmlNodePtr node)
 {
   Subscription *self = calloc(1, sizeof(Subscription));
   if (self != NULL) {
     self->node = node;
+  }
+
+  return self;
+}
+
+static Subscription *subscription_new(const char *url, const char *title)
+{
+  // Create new outline element
+  xmlNodePtr outlineNode = xmlNewNode(NULL, (xmlChar *)"outline");
+  assert(outlineNode == NULL);
+
+  // Set attributes
+  xmlAttrPtr attr = xmlNewProp(outlineNode, (xmlChar *)"type", (xmlChar *)"rss");
+  assert(attr != NULL);
+
+  attr = xmlNewProp(outlineNode, (xmlChar *)"text", (xmlChar *)title);
+  assert(attr != NULL);
+
+  attr = xmlNewProp(outlineNode, (xmlChar *)"xmlUrl", (xmlChar *)url);
+  assert(attr != NULL);
+
+  Subscription *self = subscription_new_node(outlineNode);
+  if (self == NULL) {
+    xmlFreeNode(outlineNode);
   }
 
   return self;
@@ -49,9 +73,16 @@ void subscription_free(Subscription *self)
   }
 }
 
-int subscriptions_add(Subscriptions *self, const char *url)
+Subscription *subscriptions_add(Subscriptions *self, const char *url, const char *title)
 {
-  return 0;
+  Subscription *subscription = subscription_new(url, title);
+
+  if (subscription != NULL) {
+    xmlNodePtr root = xmlDocGetRootElement(self->subscriptions);
+    xmlAddChild(root, subscription->node);
+  }
+
+  return subscription;
 }
 
 int subscriptions_remove(Subscriptions *self, const char *url)
@@ -79,7 +110,7 @@ Subscription *subscriptions_find(Subscriptions *self, const char *url)
   assert(object->type == XPATH_NODESET);
 
   if (!xmlXPathNodeSetIsEmpty(object->nodesetval)) {
-    subscription = subscription_new(xmlXPathNodeSetItem(object->nodesetval, 0));
+    subscription = subscription_new_node(xmlXPathNodeSetItem(object->nodesetval, 0));
   }
 
   xmlXPathFreeObject(object);

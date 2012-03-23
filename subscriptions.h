@@ -19,7 +19,7 @@ void subscriptions_free(Subscriptions *self);
 
 void subscription_free(Subscription *self);
 
-int subscriptions_add(Subscriptions *self, const char *url);
+Subscription *subscriptions_add(Subscriptions *self, const char *url, const char *title);
 int subscriptions_remove(Subscriptions *self, const char *url);
 Subscription *subscriptions_find(Subscriptions *self, const char *url);
 

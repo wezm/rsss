@@ -12,7 +12,7 @@ typedef struct {
 Feeds *feeds_new(const char *path);
 void feeds_free(Feeds *self);
 
-int feeds_subscribe(Feeds *self, const char *url);
+int feeds_subscribe(Feeds *self, const char *url, const char *title);
 int feeds_unsubscribe(Feeds *self, const char *url);
 
 #endif

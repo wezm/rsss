@@ -49,9 +49,10 @@ void feeds_free(Feeds *self)
 
 }
 
-int feeds_subscribe(Feeds *self, const char *url)
+int feeds_subscribe(Feeds *self, const char *url, const char *title)
 {
-  return subscriptions_add(self->subscriptions, url);
+  Subscription *subscription = subscriptions_add(self->subscriptions, url, title);
+  return subscription != NULL;
 }
 
 int feeds_unsubscribe(Feeds *self, const char *url)

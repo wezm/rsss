@@ -5,15 +5,21 @@ START_TEST (test_subscriptions_new)
 {
   // Test creation without a file
   Subscriptions *subscriptions = subscriptions_new(NULL);
-  fail_if(subscriptions == NULL, "controller is NULL");
+  fail_unless(subscriptions == NULL, "controller is not NULL");
   subscriptions_free(subscriptions);
 
-  // Test creation with a file
+  // Test creation with an existing file
   subscriptions = subscriptions_new("test/fixtures/google-reader-subscriptions.xml");
   fail_if(subscriptions == NULL, "controller is NULL");
   subscriptions_free(subscriptions);
 
-#warning add test for file that doesn't exist
+  // Test creation with a not yet existing file
+  char tmp[] = "/tmp/check_feedsXXXXXX";
+  fail_if(mktemp(tmp) == NULL, "Unable to create temp file");
+
+  subscriptions = subscriptions_new(tmp);
+  fail_if(subscriptions == NULL, "controller is NULL");
+  subscriptions_free(subscriptions);
 }
 END_TEST
 

@@ -7,7 +7,7 @@
 
 // #include "../rsss.h"
 #include "check_subscriptions.h"
-// #include "check_error.h"
+#include "check_feeds.h"
 // #include "check_datastore.h"
 // #include "check_xml_parser.h"
 // #include "check_feed_parser.h"
@@ -23,7 +23,7 @@ int main(int argc, char * const *argv)
   // }
 
   SRunner *sr = srunner_create(subscriptions_suite());
-  // srunner_add_suite(sr, datastore_suite());
+  srunner_add_suite(sr, feeds_suite());
   // srunner_add_suite(sr, xml_parser_suite());
   // srunner_add_suite(sr, feed_parser_suite());
   // srunner_add_suite(sr, collection_parser_suite());

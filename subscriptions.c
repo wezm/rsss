@@ -1,35 +1,60 @@
 #include "subscriptions.h"
 #include <assert.h>
 #include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <sys/stat.h>
 
 #define RSSS_URI_MAX 2048
 
+static xmlDocPtr build_new_document(void);
+
 Subscriptions *subscriptions_new(const char *path)
 {
+  if (path == NULL) return NULL;
+
   Subscriptions *self = calloc(1, sizeof(Subscriptions));
-  if (self == NULL) {
-    return NULL;
+  if (self == NULL) goto subscription_new_error;
+
+  self->path = strdup(path);
+  if (self->path == NULL) goto subscription_new_error;
+
+  // Check if the file exists (ENOENT)
+  struct stat path_stat;
+  int ok = stat(path, &path_stat);
+
+  if (ok == 0) {
+    self->subscriptions = xmlParseFile(path);
+  }
+  else if (errno == ENOENT) {
+    // Build an empty OPML file
+    self->subscriptions = build_new_document();
   }
 
-  // Initialise the xml document if path is supplied
-  if (path != NULL) {
-    self->subscriptions = xmlParseFile(path);
-    if (self->subscriptions == NULL) {
-      subscriptions_free(self);
-      return NULL;
-    }
-  }
+  if (self->subscriptions == NULL) goto subscription_new_error;
 
   return self;
+
+subscription_new_error:
+  subscriptions_free(self);
+  return NULL;
 }
 
 void subscriptions_free(Subscriptions *self)
 {
   if (self == NULL) return;
 
+  if (self->path) free(self->path);
   if (self->subscriptions) xmlFreeDoc(self->subscriptions);
 
   free(self);
+}
+
+// Returns the number of bytes written or -1 in case of error.
+int subscriptions_sync(Subscriptions *self)
+{
+  int format = 1; // 1 = indent
+  return xmlSaveFormatFileEnc(self->path, self->subscriptions, "utf-8", format);
 }
 
 static Subscription *subscription_new_node(xmlNodePtr node)
@@ -78,6 +103,7 @@ Subscription *subscriptions_add(Subscriptions *self, const char *url, const char
   Subscription *subscription = subscription_new(url, title);
 
   if (subscription != NULL) {
+#warning this is wrong, needs to append to body
     xmlNodePtr root = xmlDocGetRootElement(self->subscriptions);
     xmlAddChild(root, subscription->node);
   }
@@ -133,6 +159,19 @@ const char *subscription_get_attr(Subscription *self, const char *attr_name)
 }
 
 
+static xmlDocPtr build_new_document(void)
+{
+  static const char *template = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+    "<opml version=\"1.0\">"
+    "    <head>"
+    "        <title>Subscriptions</title>"
+    "    </head>"
+    "    <body>"
+    "    </body>"
+    "</opml>";
+
+  return xmlParseMemory(template, strlen(template));
+}
 
 
 

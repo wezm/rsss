@@ -18,6 +18,7 @@ SHARED
 ADD_EXECUTABLE(rsssd rsssd.c)
 ADD_EXECUTABLE(check_rsss
   test/check_subscriptions.c
+  test/check_feeds.c
   test/check_rsss.c
 )
 

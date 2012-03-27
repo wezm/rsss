@@ -6,6 +6,7 @@
 #include <libxml/xpath.h>
 
 typedef struct {
+  char *path;
   xmlDocPtr subscriptions;
 } Subscriptions;
 
@@ -16,6 +17,7 @@ typedef struct {
 
 Subscriptions *subscriptions_new(const char *path);
 void subscriptions_free(Subscriptions *self);
+int subscriptions_sync(Subscriptions *self);
 
 void subscription_free(Subscription *self);
 

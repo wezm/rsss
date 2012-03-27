@@ -19,6 +19,8 @@ static int get_subscriptions_path(const char *basepath, char *buffer, size_t len
 
 Feeds *feeds_new(const char *path)
 {
+  if (path == NULL) return NULL;
+
   char subscriptions_path[PATH_MAX];
   //entries_path[PATH_MAX]
   Feeds *self = calloc(1, sizeof(Feeds));

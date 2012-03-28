@@ -1,4 +1,5 @@
 #include "check_subscriptions.h"
+#include <unistd.h>
 #include "../subscriptions.h"
 
 START_TEST (test_subscriptions_new)
@@ -14,11 +15,25 @@ START_TEST (test_subscriptions_new)
   subscriptions_free(subscriptions);
 
   // Test creation with a not yet existing file
-  char tmp[] = "/tmp/check_feedsXXXXXX";
+  char tmp[] = "/tmp/check_subscriptionsXXXXXX";
   fail_if(mktemp(tmp) == NULL, "Unable to create temp file");
 
   subscriptions = subscriptions_new(tmp);
   fail_if(subscriptions == NULL, "controller is NULL");
+  subscriptions_free(subscriptions);
+}
+END_TEST
+
+START_TEST (test_subscriptions_sync)
+{
+  char tmp[] = "/tmp/check_subscriptionsXXXXXX";
+  fail_if(mktemp(tmp) == NULL, "Unable to generate temp file path");
+
+  Subscriptions *subscriptions = subscriptions_new(tmp);
+  fail_if(subscriptions == NULL, "controller is NULL");
+  fail_if(subscriptions_sync(subscriptions) < 0, "Error syncing subscriptions");
+
+  unlink(tmp);
   subscriptions_free(subscriptions);
 }
 END_TEST
@@ -88,9 +103,8 @@ Suite *subscriptions_suite()
   TCase *tc_core = tcase_create ("Core");
   tcase_add_test (tc_core, test_subscriptions_new);
   tcase_add_test (tc_core, test_subscriptions_find);
+  tcase_add_test (tc_core, test_subscriptions_sync);
   tcase_add_test (tc_core, test_subscription_get_attr);
-  // tcase_add_test (tc_core, test_subscriptions_parse_empty);
-  // tcase_add_test (tc_core, test_subscriptions_parse_simple);
   suite_add_tcase (s, tc_core);
 
   return s;

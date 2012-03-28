@@ -19,7 +19,7 @@ Subscriptions *subscriptions_new(const char *path)
   self->path = strdup(path);
   if (self->path == NULL) goto subscription_new_error;
 
-  // Check if the file exists (ENOENT)
+  // Check if the file exists
   struct stat path_stat;
   int ok = stat(path, &path_stat);
 
@@ -161,14 +161,14 @@ const char *subscription_get_attr(Subscription *self, const char *attr_name)
 
 static xmlDocPtr build_new_document(void)
 {
-  static const char *template = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-    "<opml version=\"1.0\">"
-    "    <head>"
-    "        <title>Subscriptions</title>"
-    "    </head>"
-    "    <body>"
-    "    </body>"
-    "</opml>";
+  static const char *template = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+    "<opml version=\"1.0\">\n"
+    "  <head>\n"
+    "    <title>Subscriptions</title>\n"
+    "  </head>\n"
+    "  <body>\n"
+    "  </body>\n"
+    "</opml>\n";
 
   return xmlParseMemory(template, strlen(template));
 }

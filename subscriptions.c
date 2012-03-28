@@ -71,7 +71,7 @@ static Subscription *subscription_new(const char *url, const char *title)
 {
   // Create new outline element
   xmlNodePtr outlineNode = xmlNewNode(NULL, (xmlChar *)"outline");
-  assert(outlineNode == NULL);
+  assert(outlineNode != NULL);
 
   // Set attributes
   xmlAttrPtr attr = xmlNewProp(outlineNode, (xmlChar *)"type", (xmlChar *)"rss");
@@ -101,12 +101,28 @@ void subscription_free(Subscription *self)
 Subscription *subscriptions_add(Subscriptions *self, const char *url, const char *title)
 {
   Subscription *subscription = subscription_new(url, title);
+  if (subscription == NULL) return NULL;
 
-  if (subscription != NULL) {
-#warning this is wrong, needs to append to body
-    xmlNodePtr root = xmlDocGetRootElement(self->subscriptions);
-    xmlAddChild(root, subscription->node);
+  // Get an XPath context for the document
+  xmlXPathContextPtr context = xmlXPathNewContext(self->subscriptions);
+  assert(context != NULL);
+
+  char *xpath = "/opml/body";
+  xmlXPathObjectPtr object = xmlXPathEval((xmlChar *)xpath, context);
+  assert(object != NULL);
+  assert(object->type == XPATH_NODESET);
+
+  if (xmlXPathNodeSetIsEmpty(object->nodesetval)) {
+    xmlXPathFreeObject(object);
+    xmlXPathFreeContext(context);
+    return NULL;
   }
+
+  xmlNodePtr body = xmlXPathNodeSetItem(object->nodesetval, 0);
+  xmlAddChild(body, subscription->node);
+
+  xmlXPathFreeObject(object);
+  xmlXPathFreeContext(context);
 
   return subscription;
 }

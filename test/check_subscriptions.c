@@ -38,27 +38,47 @@ START_TEST (test_subscriptions_sync)
 }
 END_TEST
 
-// START_TEST (test_subscriptions_add)
-// {
-//   subscriptions = subscriptions_new("test/fixtures/google-reader-subscriptions.xml");
-//   fail_if(subscriptions == NULL, "controller is NULL");
-//   subscriptions_free(subscriptions);
-// }
-// END_TEST
+START_TEST (test_subscriptions_add)
+{
+  char tmp[] = "/tmp/check_subscriptionsXXXXXX";
+  fail_if(mktemp(tmp) == NULL, "Unable to generate temp file path");
 
-/*
+  // Create a new document
+  Subscriptions *subscriptions = subscriptions_new(tmp);
+  fail_if(subscriptions == NULL, "controller is NULL");
 
-  <outline text="Daring Fireball" title="Daring Fireball"
-      type="rss" xmlUrl="http://daringfireball.net/index.xml" htmlUrl="http://daringfireball.net/"/>
+  // add a subscription
+  Subscription *subscription = subscriptions_add(
+    subscriptions,
+    "http://test.example.com/feed",
+    "RSSS Test Feed"
+  );
+  fail_if(subscription == NULL, "Subscription is NULL");
 
-*/
+  // then save
+  fail_if(subscriptions_sync(subscriptions) < 0, "Error syncing subscriptions");
+
+  // Now re-open and find the feed that was added
+  subscriptions_free(subscriptions);
+  subscriptions = subscriptions_new(tmp);
+  fail_if(subscriptions == NULL, "controller is NULL");
+
+  subscription = subscriptions_find(subscriptions, "http://test.example.com/feed");
+  fail_if(subscription == NULL, "Unable to find subscription");
+
+  subscriptions_free(subscriptions);
+  printf("%s\n", tmp);
+  unlink(tmp);
+}
+END_TEST
+
 START_TEST (test_subscriptions_find)
 {
   Subscriptions *subscriptions = subscriptions_new("test/fixtures/google-reader-subscriptions.xml");
   fail_if(subscriptions == NULL, "controller is NULL");
 
   Subscription *feed = subscriptions_find(subscriptions, "http://daringfireball.net/index.xml");
-  fail_if(subscriptions == NULL, "Unable to find subscription");
+  fail_if(feed == NULL, "Unable to find subscription");
 
   subscription_free(feed);
   subscriptions_free(subscriptions);
@@ -87,8 +107,6 @@ START_TEST (test_subscription_get_attr)
 }
 END_TEST
 
-
-
 // Test list subscriptions
 
 // Test delete subscription
@@ -104,6 +122,7 @@ Suite *subscriptions_suite()
   tcase_add_test (tc_core, test_subscriptions_new);
   tcase_add_test (tc_core, test_subscriptions_find);
   tcase_add_test (tc_core, test_subscriptions_sync);
+  tcase_add_test (tc_core, test_subscriptions_add);
   tcase_add_test (tc_core, test_subscription_get_attr);
   suite_add_tcase (s, tc_core);
 

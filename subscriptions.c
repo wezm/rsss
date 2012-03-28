@@ -127,8 +127,8 @@ Subscription *subscriptions_find(Subscriptions *self, const char *url)
   assert(context != NULL);
 
   char xpath[RSSS_URI_MAX];
-#warning need to quote url
-  int size = snprintf(xpath, RSSS_URI_MAX, "//outline[@xmlUrl=\"%s\"]", url);
+#warning need to quote url, work out XPath for any outline under body
+  int size = snprintf(xpath, RSSS_URI_MAX, "/opml/body//outline[@xmlUrl=\"%s\"]", url);
   if (size >= RSSS_URI_MAX) goto bail;
 
   xmlXPathObjectPtr object = xmlXPathEval((xmlChar *)xpath, context);
@@ -136,7 +136,9 @@ Subscription *subscriptions_find(Subscriptions *self, const char *url)
   assert(object->type == XPATH_NODESET);
 
   if (!xmlXPathNodeSetIsEmpty(object->nodesetval)) {
-    subscription = subscription_new_node(xmlXPathNodeSetItem(object->nodesetval, 0));
+    subscription = subscription_new_node(
+      xmlXPathNodeSetItem(object->nodesetval, 0)
+    );
   }
 
   xmlXPathFreeObject(object);

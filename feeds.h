@@ -15,4 +15,6 @@ void feeds_free(Feeds *self);
 int feeds_subscribe(Feeds *self, const char *url, const char *title);
 int feeds_unsubscribe(Feeds *self, const char *url);
 
+int feeds_sync(Feeds *self);
+
 #endif

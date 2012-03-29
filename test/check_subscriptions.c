@@ -67,7 +67,6 @@ START_TEST (test_subscriptions_add)
   fail_if(subscription == NULL, "Unable to find subscription");
 
   subscriptions_free(subscriptions);
-  printf("%s\n", tmp);
   unlink(tmp);
 }
 END_TEST

@@ -61,3 +61,15 @@ int feeds_unsubscribe(Feeds *self, const char *url)
 {
   return subscriptions_remove(self->subscriptions, url);
 }
+
+int feeds_sync(Feeds *self)
+{
+  int entries_bytes_written = 0;
+  int subscriptions_bytes_written = subscriptions_sync(self->subscriptions);
+  if (subscriptions_bytes_written < 0) return -1;
+
+  // int entries_bytes_written = entries_sync(self->entries);
+  // if (entries_bytes_written < 0) return -1;
+
+  return subscriptions_bytes_written + entries_bytes_written;
+}

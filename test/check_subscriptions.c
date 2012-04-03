@@ -33,6 +33,8 @@ START_TEST (test_subscriptions_sync)
   fail_if(subscriptions == NULL, "controller is NULL");
   fail_if(subscriptions_sync(subscriptions) < 0, "Error syncing subscriptions");
 
+#warning should verify the content of the file
+
   unlink(tmp);
   subscriptions_free(subscriptions);
 }
@@ -76,10 +78,34 @@ START_TEST (test_subscriptions_find)
   Subscriptions *subscriptions = subscriptions_new("test/fixtures/google-reader-subscriptions.xml");
   fail_if(subscriptions == NULL, "controller is NULL");
 
-  Subscription *feed = subscriptions_find(subscriptions, "http://daringfireball.net/index.xml");
+  // Attempt to find subscription that doesn't exist
+  Subscription *feed = subscriptions_find(subscriptions, "http://example.com/not-here");
+  fail_unless(feed == NULL, "Expected no subscription, but got subscription");
+
+  // Find one that does exist
+  feed = subscriptions_find(subscriptions, "http://daringfireball.net/index.xml");
   fail_if(feed == NULL, "Unable to find subscription");
 
   subscription_free(feed);
+  subscriptions_free(subscriptions);
+}
+END_TEST
+
+START_TEST (test_subscriptions_remove)
+{
+  Subscriptions *subscriptions = subscriptions_new("test/fixtures/subscriptions.xml");
+  fail_if(subscriptions == NULL, "controller is NULL");
+
+  Subscription *feed = subscriptions_find(subscriptions, "http://hivelogic.com/combined.rss");
+  fail_if(feed == NULL, "Unable to find subscription");
+
+  subscriptions_remove(subscriptions, feed);
+  subscription_free(feed);
+
+  // Now the feed should not exist
+  feed = subscriptions_find(subscriptions, "http://hivelogic.com/combined.rss");
+  fail_unless(feed == NULL, "Found removed subscription");
+
   subscriptions_free(subscriptions);
 }
 END_TEST
@@ -108,8 +134,6 @@ END_TEST
 
 // Test list subscriptions
 
-// Test delete subscription
-
 // Test update subscription
 
 Suite *subscriptions_suite()
@@ -122,6 +146,7 @@ Suite *subscriptions_suite()
   tcase_add_test (tc_core, test_subscriptions_find);
   tcase_add_test (tc_core, test_subscriptions_sync);
   tcase_add_test (tc_core, test_subscriptions_add);
+  tcase_add_test (tc_core, test_subscriptions_remove);
   tcase_add_test (tc_core, test_subscription_get_attr);
   suite_add_tcase (s, tc_core);
 

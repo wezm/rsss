@@ -127,9 +127,12 @@ Subscription *subscriptions_add(Subscriptions *self, const char *url, const char
   return subscription;
 }
 
-int subscriptions_remove(Subscriptions *self, const char *url)
+void subscriptions_remove(Subscriptions *self, Subscription *subscription)
 {
-  return 0;
+  // Unlink and destroy the subscription
+  xmlUnlinkNode(subscription->node);
+  xmlFreeNode(subscription->node);
+  subscription->node = NULL;
 }
 
 Subscription *subscriptions_find(Subscriptions *self, const char *url)

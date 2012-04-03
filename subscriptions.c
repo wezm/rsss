@@ -179,6 +179,10 @@ const char *subscription_get_attr(Subscription *self, const char *attr_name)
   return (const char *)valueNode->content;
 }
 
+void subscriptions_print(Subscriptions *self)
+{
+  xmlDocDump(stdout, self->subscriptions);
+}
 
 static xmlDocPtr build_new_document(void)
 {

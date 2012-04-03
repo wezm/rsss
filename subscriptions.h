@@ -28,4 +28,6 @@ Subscription *subscriptions_find(Subscriptions *self, const char *url);
 
 const char *subscription_get_attr(Subscription *self, const char *attr);
 
+void subscriptions_print(Subscriptions *self);
+
 #endif

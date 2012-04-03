@@ -5,6 +5,7 @@
 START_TEST (test_feeds_new)
 {
   // Test creation with a file
+#warning this doesn't test what it thinks it does (due to path generation)
   Feeds *feeds = feeds_new("test/fixtures/google-reader-feeds.xml");
   fail_if(feeds == NULL, "controller is NULL");
   feeds_free(feeds);
@@ -21,10 +22,22 @@ START_TEST (test_feeds_subscribe)
   Feeds *feeds = feeds_new(tmp);
   fail_if(feeds == NULL, "controller is NULL");
 
-  fail_if(!feeds_subscribe(feeds, "http://example.com/feed.rss", "Example Feed"));
+  fail_unless(feeds_subscribe(feeds, "http://example.com/feed.rss", "Example Feed"));
 
   feeds_free(feeds);
   unlink(tmp);
+}
+END_TEST
+
+START_TEST (test_feeds_unsubscribe)
+{
+  Feeds *feeds = feeds_new("test/fixtures/test");
+  fail_if(feeds == NULL, "controller is NULL");
+
+  bool unsubscribed = feeds_unsubscribe(feeds, "http://hivelogic.com/combined.rss");
+  fail_unless(unsubscribed == true, "Did not unsubscribe");
+
+  feeds_free(feeds);
 }
 END_TEST
 
@@ -50,6 +63,7 @@ Suite *feeds_suite()
   TCase *tc_core = tcase_create ("Core");
   tcase_add_test (tc_core, test_feeds_new);
   tcase_add_test (tc_core, test_feeds_subscribe);
+  tcase_add_test (tc_core, test_feeds_unsubscribe);
   tcase_add_test (tc_core, test_feeds_sync);
 
   Suite *s = suite_create ("Feeds Manager");

@@ -93,7 +93,7 @@ END_TEST
 
 START_TEST (test_subscriptions_remove)
 {
-  Subscriptions *subscriptions = subscriptions_new("test/fixtures/subscriptions.xml");
+  Subscriptions *subscriptions = subscriptions_new("test/fixtures/test_subscriptions.opml");
   fail_if(subscriptions == NULL, "controller is NULL");
 
   Subscription *feed = subscriptions_find(subscriptions, "http://hivelogic.com/combined.rss");

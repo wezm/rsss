@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+    <head>
+        <title>Wesley Moore subscriptions in Google Reader</title>
+    </head>
+    <body>
+        <outline title="Evening at Adler" text="Evening at Adler">
+            <outline text="Call Me Fishmeal." title="Call Me Fishmeal."
+                type="rss" xmlUrl="http://wilshipley.com/blog/feed.xml" htmlUrl="http://blog.wilshipley.com/"/>
+            <outline text="carpeaqua" title="carpeaqua" type="rss"
+                xmlUrl="http://feeds.feedburner.com/carpeaqua" htmlUrl="http://carpeaqua.com/"/>
+            <outline text="Code in Danger" title="Code in Danger"
+                type="rss"
+                xmlUrl="http://aniki.daionet.gr.jp/~knok/blog/blosxom.cgi/index.rss" htmlUrl="http://aniki.daionet.gr.jp/~knok/blog/blosxom.cgi"/>
+            <outline text="Daring Fireball" title="Daring Fireball"
+                type="rss" xmlUrl="http://daringfireball.net/index.xml" htmlUrl="http://daringfireball.net/"/>
+            <outline text="[GusMueller blog]" title="[GusMueller blog]"
+                type="rss" xmlUrl="http://gusmueller.com/blog/rss.xml" htmlUrl="http://gusmueller.com/blog/"/>
+            <outline text="Hivelogic - Hivelogic Combined Feed"
+                title="Hivelogic - Hivelogic Combined Feed" type="rss"
+                xmlUrl="http://hivelogic.com/combined.rss" htmlUrl="http://hivelogic.com/"/>
+            <outline text="inessential.com" title="inessential.com"
+                type="rss" xmlUrl="http://inessential.com/xml/rss.xml" htmlUrl="http://inessential.com/"/>
+            <outline text="Marco.org" title="Marco.org" type="rss"
+                xmlUrl="http://www.marco.org/rss" htmlUrl="http://www.marco.org/"/>
+            <outline text="Red Sweater Blog" title="Red Sweater Blog"
+                type="rss"
+                xmlUrl="http://www.red-sweater.com/blog/feed/" htmlUrl="http://www.red-sweater.com/blog"/>
+            <outline text="Sepia Labs" title="Sepia Labs" type="rss"
+                xmlUrl="http://sepialabs.com/blog/?feed=rss2" htmlUrl="http://sepialabs.com/blog"/>
+            <outline text="Tales from the Red Shed"
+                title="Tales from the Red Shed" type="rss"
+                xmlUrl="http://rentzsch.com/rss.xml/" htmlUrl="http://rentzsch.tumblr.com/"/>
+            <outline text="The Shape of Everything"
+                title="The Shape of Everything" type="rss"
+                xmlUrl="http://shapeof.com/atom.xml" htmlUrl="http://shapeof.com/"/>
+        </outline>
+    </body>
+</opml>

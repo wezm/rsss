@@ -48,7 +48,6 @@ void feeds_free(Feeds *self)
   if (self->subscriptions != NULL) subscriptions_free(self->subscriptions);
 
   free(self);
-
 }
 
 int feeds_subscribe(Feeds *self, const char *url, const char *title)
@@ -57,9 +56,16 @@ int feeds_subscribe(Feeds *self, const char *url, const char *title)
   return subscription != NULL;
 }
 
-int feeds_unsubscribe(Feeds *self, const char *url)
+bool feeds_unsubscribe(Feeds *self, const char *url)
 {
-  return subscriptions_remove(self->subscriptions, url);
+  Subscription *subscription = subscriptions_find(self->subscriptions, url);
+  if (subscription != NULL) {
+    subscriptions_remove(self->subscriptions, subscription);
+    subscription_free(subscription);
+    return true;
+  }
+
+  return false;
 }
 
 int feeds_sync(Feeds *self)
